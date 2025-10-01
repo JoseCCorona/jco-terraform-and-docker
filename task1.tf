@@ -22,8 +22,7 @@ module "sg_http" {
 }
 
 module "ec2_instance" {
-  source  = "terraform-aws-modules/ec2-instance/aws"
-  version = "6.1.1"
+  source  = "github.com/JoseCCorona/terraform-ec2-module"
 
   name = "${var.prefix}-task1-instance"
   ami = var.ami
