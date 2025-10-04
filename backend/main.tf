@@ -1,14 +1,5 @@
-module "s3-bucket" {
-  source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "5.7.0"
+module "s3_bucket" {
+  source = "github.com/JoseCCorona/terraform-s3-module"
 
-  bucket = "${var.prefix}-devops-team-backend"
-  acl    = "private"
-
-  control_object_ownership = true
-  object_ownership         = "ObjectWriter"
-
-  versioning = {
-    enabled = true
-  }
+  bucket_name = "${var.prefix}-devops-team-backend"
 }

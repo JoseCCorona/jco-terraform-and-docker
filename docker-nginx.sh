@@ -1,5 +1,7 @@
 #!/bin/bash
 
+DOCKER_USER=$(aws ssm get-parameter --name "/docker/user" --with-decryption --query "Parameter.Value" --output text --region us-east-1)
+DOCKER_PASS=$(aws ssm get-parameter --name "/docker/pass" --with-decryption --query "Parameter.Value" --output text --region us-east-1)
 # Update system packages
 sudo yum update -y
 sleep 1
@@ -14,14 +16,13 @@ mkdir ngnix
 cd ngnix
 touch index.html
 cat <<EOF > index.html
-<!doctype html>
+<!DOCTYPE html>
 <html>
- <body style="backgroud-color:rgb(49, 214, 220);"><center>
     <head>
-     <title>DevOps Terraform and Docker HandsOn</title>
+        <title>This is DevOps Terraform and Docker HandsOn</title>
     </head>
-    <body>
-     <p>This is DevOps Terraform and Docker HandsOn<p>
+    <body style="background-color:rgb(49,214,220);">
+        <h1>Jose Corona DevOps Terraform and Docker HandsOn</h1>
     </body>
 </html>
 EOF
@@ -29,10 +30,12 @@ EOF
 touch Dockerfile
 cat <<EOF > Dockerfile
 FROM nginx:latest
-COPY ./index.html /usr/share/nginx/html
-EXPOSE 8080
+COPY index.html /usr/share/nginx/html/index.html
+EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 EOF
-docker build . -t josekr/ngnix
-docker push josekr/ngnix
-docker run -d -p 80:8080 nginx
+docker build . -t jco-ngnix
+echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+docker tag jco-ngnix $DOCKER_USER/jco-devops-academy:latest
+docker push $DOCKER_USER/jco-devops-academy:latest
+docker run -d -p 80:80 jco-ngnix
